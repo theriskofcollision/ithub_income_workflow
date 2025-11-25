@@ -7,25 +7,33 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+import google.generativeai as genai
+
 class Agent:
     def __init__(self, name, role):
         self.name = name
         self.role = role
-        self.llm_api_key = os.getenv("GEMINI_API_KEY") # Assuming Gemini for now based on history
+        self.llm_api_key = os.getenv("GEMINI_API_KEY")
+        if self.llm_api_key:
+            genai.configure(api_key=self.llm_api_key)
+            self.model = genai.GenerativeModel('gemini-pro')
+        else:
+            self.model = None
 
     def log(self, message):
         print(f"[{self.name}] {message}")
 
     def call_llm(self, prompt):
-        # Placeholder for LLM call. 
-        # In a real scenario, this would call Google Gemini or OpenAI.
-        # For now, we will simulate or return a structured placeholder if no key.
-        if not self.llm_api_key:
+        if not self.model:
             self.log("WARNING: No LLM API Key found. Returning mock response.")
             return "Mock LLM Response: Analysis complete."
         
-        # TODO: Implement actual LLM call here using google-generativeai or similar
-        return f"LLM Response to: {prompt[:50]}..."
+        try:
+            response = self.model.generate_content(prompt)
+            return response.text
+        except Exception as e:
+            self.log(f"Error calling LLM: {e}")
+            return f"Error generating response: {e}"
 
 class TrendScout(Agent):
     def __init__(self):
