@@ -16,7 +16,7 @@ class Agent:
         self.llm_api_key = os.getenv("GEMINI_API_KEY")
         if self.llm_api_key:
             genai.configure(api_key=self.llm_api_key)
-            self.model = genai.GenerativeModel('gemini-pro')
+            self.model = genai.GenerativeModel('gemini-1.5-flash')
         else:
             self.model = None
 
