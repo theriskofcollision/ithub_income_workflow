@@ -33,6 +33,15 @@ class Agent:
             return response.text
         except Exception as e:
             self.log(f"Error calling LLM: {e}")
+            # DEBUG: List available models to find the correct name
+            try:
+                self.log("DEBUG: Listing available models...")
+                for m in genai.list_models():
+                    if 'generateContent' in m.supported_generation_methods:
+                        self.log(f" - {m.name}")
+            except Exception as list_e:
+                self.log(f"Error listing models: {list_e}")
+            
             return f"Error generating response: {e}"
 
 class TrendScout(Agent):
